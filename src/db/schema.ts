@@ -13,8 +13,12 @@ export const users = pgTable("users", {
 
 export const menu_items = pgTable('menu_items', {
   id: serial('id').primaryKey(),
-  name: text('name').notNull(),
+  name: text('name').notNull().notNull(),
   description: text('description'),
+  price: integer('price'),
+  image_url: varchar('image_url', { length: 1000 }),
+  created_at: timestamp('created_at').defaultNow(),
+
 });
 
 export const daily_tiffin = pgTable("daily_tiffin", {
