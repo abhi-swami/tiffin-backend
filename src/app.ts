@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes";
-import menuRoutes from "./routes/menu.routes";
-import tiffinItems from "./routes/tiffineItems.rotues";
+import menuRoutes from "./routes/menuItems.routes";
+import tiffinItems from "./routes/tiffinItems.rotues";
 import { errorHandler } from "./routes/errorhandle";
 
 const app = express();
