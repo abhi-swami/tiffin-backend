@@ -1,27 +1,40 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  throw new Error("DATABASE_URL is required");
+  throw new Error(`Database URL is required`);
 }
 
-export const pool = new Pool({
-  connectionString,
-});
+const pool = new Pool({ connectionString });
 
-pool.on("error", (error) => {
-  console.error("Unexpected PostgreSQL pool error", error);
-});
+pool.on("error", (err) => {
+  console.error("Unexpected postgres pool error", err);
+  throw new Error("Unexpected postgres pool error");
+})
 
-export const db = drizzle(pool);
 
-export async function connectToDatabase() {
-  await pool.query("select 1");
-  console.log("Database connection established");
+const db = drizzle(pool);
+
+async function connectToDB() {
+  try {
+    await pool.query("SELECT 1");
+    console.log("Db connected is established")
+  } catch (err) {
+    throw new Error(`Unable to establish new DB Connection: ${err}`);
+
+  }
 }
 
-export async function closeDatabaseConnection() {
-  await pool.end();
+
+async function closeDBConnection() {
+  try {
+    await pool.end()
+
+  } catch (err) {
+    throw new Error(`unable to disconnect DB: ${err}`)
+  }
 }
+
+export { pool, db, connectToDB, closeDBConnection }

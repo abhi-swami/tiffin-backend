@@ -1,12 +1,12 @@
 import "dotenv/config";
 import app from "./app";
-import { closeDatabaseConnection, connectToDatabase } from "./db";
+import { connectToDB, closeDBConnection } from "./db";
 
 const PORT = Number(process.env.PORT) || 5000;
 
 async function startServer() {
   try {
-    await connectToDatabase();
+    await connectToDB();
 
     const server = app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
@@ -20,24 +20,26 @@ async function startServer() {
       }
 
       isShuttingDown = true;
-      console.log(`${signal} received. Shutting down gracefully.`);
+      console.log(`${signal} received. Shutting down.`);
 
       server.close(async () => {
         try {
-          await closeDatabaseConnection();
+          await closeDBConnection();
           process.exit(0);
         } catch (error) {
-          console.error("Error while closing database connection", error);
+          console.error("Error in closing database connection", error);
           process.exit(1);
         }
       });
     };
 
     process.on("SIGINT", () => {
+      // Interrupt signal (Ctrl + C)
       void shutdown("SIGINT");
     });
 
     process.on("SIGTERM", () => {
+      // Termination signal
       void shutdown("SIGTERM");
     });
   } catch (error) {
