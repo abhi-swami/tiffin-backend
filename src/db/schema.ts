@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, date, integer, varchar, serial, timestamp, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, date, integer, varchar, serial, timestamp, boolean } from "drizzle-orm/pg-core";
 import { create } from "node:domain";
 
 export const users = pgTable("users", {
@@ -18,6 +18,7 @@ export const menu_items = pgTable('menu_items', {
   price: integer('price'),
   image_url: varchar('image_url', { length: 1000 }),
   created_at: timestamp('created_at').defaultNow(),
+  // is_deleted: boolean('is_deleted').default(false),
 
 });
 

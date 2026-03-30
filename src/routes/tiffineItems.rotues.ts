@@ -3,42 +3,93 @@ import { Request, Response } from "express";
 import { db } from "../db/index";
 import { daily_tiffin_items, daily_tiffin, menu_items } from "../db/schema";
 import { eq } from "drizzle-orm";
-import { date } from "drizzle-orm/pg-core";
 
 const router = express.Router();
 
-router.post("/", async(req:Request,res:Response)=>{
-    try{
-        let selecteMenuItems:number[] = [];
-        let tiffinId:number = 0
 
-        const {selected_items} = req.body;
-        const presentDate = new Date().toISOString().split('T')[0];
+router.get("/", async (req:Request, res:Response) => {
+    try {
+        const presentDate = new Date().toISOString().split("T")[0];
 
-        const isTodaysTiffinPresent = await db.select().from(daily_tiffin).where(eq(daily_tiffin.date, presentDate));
-
-        if(isTodaysTiffinPresent.length == 0){
-            const newTiffin = await db.insert(daily_tiffin).values({date:presentDate}).returning();
-            tiffinId = newTiffin[0].id;
-        }else{
-            tiffinId = isTodaysTiffinPresent[0].id;
-        }
-        console.log("Tiffin present for today:", isTodaysTiffinPresent);
-
+        const result = await db.select({
+            id: menu_items.id,
+            name: menu_items.name,
+            description: menu_items.description,
+            price: menu_items.price,
+            image_url: menu_items.image_url,
+            tiffin_id  : daily_tiffin.id,
+        }).from(daily_tiffin)
+        . innerJoin(daily_tiffin_items, eq(daily_tiffin.id, daily_tiffin_items.daily_tiffin_id))
+        .innerJoin(menu_items, eq(menu_items.id, daily_tiffin_items.menu_item_id))
+        .where((eq(daily_tiffin.date, presentDate)));
 
         
-        selected_items.forEach(async (item:number)=>{
-            let menuItemId = Number(item);
-            let response = await db.insert(daily_tiffin_items).values({daily_tiffin_id:tiffinId, menu_item_id:menuItemId}).returning();
-            console.log("Inserted tiffin item:", response);
-        })
+        if (result.length === 0) {
+            return res.status(404).json({ error: "No tiffin found for today" });
+        }
 
-        res.json(isTodaysTiffinPresent);
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-    catch(error){
-        res.status(500).json({ error: "Internal Server Error" });   
+});
+
+router.post("/", async (req: Request, res: Response) => {
+    try {
+        const { selected_items } = req.body;
+
+        if (!Array.isArray(selected_items) || selected_items.length === 0) {
+            return res.status(400).json({ error: "Invalid items" });
+        }
+
+        const presentDate = new Date().toISOString().split("T")[0];
+
+        const result = await db.transaction(async (tx) => {
+            let tiffinId: number;
+
+            const existing = await tx
+                .select()
+                .from(daily_tiffin)
+                .where(eq(daily_tiffin.date, presentDate));
+
+            if (existing.length === 0) {
+                const [newTiffin] = await tx
+                    .insert(daily_tiffin)
+                    .values({ date: presentDate })
+                    .returning();
+
+                tiffinId = newTiffin.id;
+            } else {
+                tiffinId = existing[0].id;
+            }
+
+            await tx.insert(daily_tiffin_items).values(
+                selected_items.map((item: number) => ({
+                    daily_tiffin_id: tiffinId,
+                    menu_item_id: Number(item),
+                }))
+            );
+
+            return { tiffinId };
+        });
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+router.put("/:id", async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { selected_items } = req.body;
+    }
+    catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
     }
 })
-
 
 export default router;
