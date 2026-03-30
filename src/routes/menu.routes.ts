@@ -30,7 +30,7 @@ router.post("/", async(req: Request, res: Response) => {
 }); 
 
 
-router.put("/:id", async (req,res)=>{
+router.put("/:id", async (req:Request,res:Response)=>{
     try{
         const {id } = req.params;
         const { name, description } = req.body;
@@ -43,7 +43,7 @@ router.put("/:id", async (req,res)=>{
     }
 })
 
-router.delete("/:id", async (req,res)=>{    
+router.delete("/:id", async (req:Request,res:Response)=>{    
     try{
         const {id} = req.params;
         const deletedMenuItem = await db.delete(menu_items).where(eq(menu_items.id,Number(id))).returning();
