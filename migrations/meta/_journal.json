@@ -15,6 +15,27 @@
       "when": 1774846638229,
       "tag": "0001_bent_doctor_octopus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774853307122,
+      "tag": "0002_absurd_rocket_racer",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1774853468332,
+      "tag": "0003_reflective_bushwacker",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1774853711799,
+      "tag": "0004_giant_dracula",
+      "breakpoints": true
     }
   ]
 }
