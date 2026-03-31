@@ -5,10 +5,25 @@ import menuItemsRoutes from "./routes/menuItems.routes";
 import tiffinItems from "./routes/tiffinItems.rotues";
 import menuRoutes from "./routes/menu.routes";
 import { errorHandler } from "./routes/errorhandle";
+import { sessionMiddleware } from './middleware/session.middlware';
 
 const app = express();
+const allowedOrigins = process.env.CORS_ORIGIN?.split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-app.use(cors());
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
+app.use(
+  cors({
+    origin: allowedOrigins?.length ? allowedOrigins : true,
+    credentials: true,
+  })
+);
+
+app.use(sessionMiddleware);
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);

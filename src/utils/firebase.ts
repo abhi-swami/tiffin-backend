@@ -7,12 +7,12 @@ import { initializeApp } from 'firebase-admin/app';
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: `${process.env.FIREBASE_API_KEY}`,
-  authDomain: "tiffin-74cfe.firebaseapp.com",
-  projectId: "tiffin-74cfe",
-  storageBucket: "tiffin-74cfe.firebasestorage.app",
-  messagingSenderId: "838483069469",
-  appId: "1:838483069469:web:f6ffbc8da30b76ba8414f4",
-  measurementId: "G-21ELRQM9R4"
+  authDomain: "my-new-tiffin.firebaseapp.com",
+  projectId: "my-new-tiffin",
+  storageBucket: "my-new-tiffin.firebasestorage.app",
+  messagingSenderId: "167966303278",
+  appId: "1:167966303278:web:9c5f21f3c49e924d75ebbf",
+  measurementId: "G-516HQR6W1K"
 };
 
 // Initialize Firebase
