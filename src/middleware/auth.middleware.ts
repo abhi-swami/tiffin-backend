@@ -1,10 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
+import { UserRequest } from "../utils/interfaces";
 
-export const authMiddleware = (req: any, res: Response, next: NextFunction) => {
-  if (!req.session?.user) {
+export const authMiddleware = (
+  req: UserRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.session?.userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  req.user = req.session.user;
+  req.user = { id: req.session.userId };
   next();
 };
