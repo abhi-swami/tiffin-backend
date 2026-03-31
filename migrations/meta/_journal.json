@@ -50,6 +50,13 @@
       "when": 1774873976699,
       "tag": "0006_aspiring_raider",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774951329806,
+      "tag": "0007_worthless_corsair",
+      "breakpoints": true
     }
   ]
 }

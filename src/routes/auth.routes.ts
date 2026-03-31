@@ -30,9 +30,19 @@ router.post("/send-otp", (req: Request, res: Response) => {
     res.json({ message: "OTP sent" });
 });
 
+interface User{
+    phone: number;
+}
+
+type NewRequest = Request & {
+    session: {
+        user?: User;    
+        authenticatedAt?: string;
+    }
+};
 
 
-router.post("/verify-otp", async (req: Request, res: Response) => {
+router.post("/verify-otp", async (req: NewRequest, res: Response) => {
     const { phone, otp } = req.body;
     console.log(`Verifying OTP for ${phone}: ${otp}`);
 
@@ -55,6 +65,7 @@ router.post("/verify-otp", async (req: Request, res: Response) => {
 
     req.session.user = { phone };
     req.session.authenticatedAt = new Date().toISOString();
+
 
     await new Promise<void>((resolve, reject) => {
         req.session.save((error) => {

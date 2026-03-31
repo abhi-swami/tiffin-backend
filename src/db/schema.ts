@@ -5,8 +5,8 @@ export const users = pgTable("users", {
   id: uuid('id').defaultRandom().primaryKey(),
   phone: text('phone').notNull().unique(),
   email: text('email').unique(),
-  first_name: varchar('first_name', { length: 100 }).notNull(),
-  last_name: varchar('last_name', { length: 100 }).notNull(),
+  first_name: varchar('first_name', { length: 100 }),
+  last_name: varchar('last_name', { length: 100 }),
   profile_image: varchar('profile_image', { length: 1000 }),
   created_at: timestamp('created_at').defaultNow(),
 });
