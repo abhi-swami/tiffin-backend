@@ -22,11 +22,11 @@
   },
   "homepage": "https://github.com/abhi-swami/tiffin-backend#readme",
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
+    "firebase-admin": "^13.7.0",
     "jsonwebtoken": "^9.0.3",
     "nodemon": "^3.1.14",
     "pg": "^8.20.0"
