@@ -3,13 +3,12 @@ import { Request, Response } from "express";
 import { db } from "../db/index";
 import { daily_tiffin_items, daily_tiffin, menu_items } from "../db/schema";
 import { eq } from "drizzle-orm";
-
+import { today } from "../utils/date";
 const router = express.Router();
 
 
 router.get("/", async (req: Request, res: Response) => {
     try {
-        const presentDate = new Date().toISOString().split("T")[0];
 
         const result = await db.select({
             id: menu_items.id,
@@ -21,8 +20,6 @@ router.get("/", async (req: Request, res: Response) => {
         }).from(daily_tiffin)
             .innerJoin(daily_tiffin_items, eq(daily_tiffin.id, daily_tiffin_items.daily_tiffin_id))
             .innerJoin(menu_items, eq(menu_items.id, daily_tiffin_items.menu_item_id))
-            .where((eq(daily_tiffin.date, presentDate)));
-
 
         if (result.length === 0) {
             return res.status(404).json({ error: "No tiffin found for today" });
@@ -43,7 +40,6 @@ router.post("/", async (req: Request, res: Response) => {
             return res.status(400).json({ error: "Invalid items" });
         }
 
-        const presentDate = new Date().toISOString().split("T")[0];
 
         const result = await db.transaction(async (tx) => {
             let tiffinId: number;
@@ -51,12 +47,12 @@ router.post("/", async (req: Request, res: Response) => {
             const existing = await tx
                 .select()
                 .from(daily_tiffin)
-                .where(eq(daily_tiffin.date, presentDate));
+                .where(eq(daily_tiffin.date, today));
 
             if (existing.length === 0) {
                 const [newTiffin] = await tx
                     .insert(daily_tiffin)
-                    .values({ date: presentDate })
+                    .values({ date: today })
                     .returning();
 
                 tiffinId = newTiffin.id;

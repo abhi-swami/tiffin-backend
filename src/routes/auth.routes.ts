@@ -154,6 +154,8 @@ router.post("/verify-otp", async (req: UserRequest, res: Response) => {
     });
 
     req.session.userId = user.id;
+    req.session.userRole = user.role;
+    console.log("Session after OTP verification:", req.session);
 
     await new Promise<void>((resolve, reject) => {
       req.session.save((error) => {
