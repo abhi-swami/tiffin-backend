@@ -21,9 +21,9 @@ router.get("/",async(req:Request, res:Response)=>{
         .innerJoin(menu_items,eq(daily_tiffin_items.menu_item_id,menu_items.id))
         .where(eq(daily_tiffin.date, today));
         
-        let response = await db.select().from(daily_tiffin)
+        // let response = await db.select().from(daily_tiffin)
 
-        console.log("Menu Items:", response);
+        // console.log("Menu Items:", response);
        res.status(200).json(result);
     }catch(error){
         console.error(error);

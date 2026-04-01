@@ -6,7 +6,7 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("Auth Middleware - Session Data:", req.session  );
+  // console.log("Auth Middleware - Session Data:", req.session  );
   if (!req.session?.userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }

@@ -34,7 +34,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/menu", menuRoutes);
 
-app.use("/api/menu-items", menuItemsRoutes);
+app.use("/api/menu-items", menuItemsRoutes, roleMiddleware([1, 2]));
 
 app.use("/api/tiffin-items", authMiddleware, roleMiddleware([1, 2]), tiffinItems);
 

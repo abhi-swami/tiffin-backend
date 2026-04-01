@@ -9,7 +9,7 @@ const router = express.Router();
 router.get("/", async(req: Request, res: Response) => {
     try {
         const menuItems = await db.select().from(menu_items);
-        console.log("Fetched menu items:", menuItems);
+        // console.log("Fetched menu items:", menuItems);
         res.status(200).json(menuItems);
     } catch (error) {
         console.error("Error fetching menu items:", error);
@@ -21,7 +21,7 @@ router.post("/", async(req: Request, res: Response) => {
     try {
         const { name, description } = req.body;      
         const newMenuItem = await db.insert(menu_items).values({ name, description }).returning();
-        console.log("Created new menu item:", newMenuItem);
+        // console.log("Created new menu item:", newMenuItem);
         res.status(201).json(newMenuItem);
     } catch (error) {
         console.error("Error creating menu item:", error);
@@ -35,7 +35,7 @@ router.put("/:id", async (req:Request,res:Response)=>{
         const {id } = req.params;
         const { name, description } = req.body;
         const updatedMenuItem = await db.update(menu_items).set({name,description}).where(eq(menu_items.id, Number(id))).returning();
-        console.log("Updated menu item:", updatedMenuItem);
+        // console.log("Updated menu item:", updatedMenuItem);
         res.status(200).json(updatedMenuItem);
     }catch(error){
         console.error("Error updating menu item:", error);

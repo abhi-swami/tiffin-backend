@@ -46,7 +46,7 @@ const grouped = Object.values(
   }, {} as Record<string, any>)
 );
 
-        console.log("User Orders:", grouped, 'userId', req.session?.userId);
+        // console.log("User Orders:", grouped, 'userId', req.session?.userId);
 
         res.status(200).json({ message: "Order route is working", orders: grouped });
     } catch (error) {
