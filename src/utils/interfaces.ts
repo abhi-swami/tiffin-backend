@@ -1,9 +1,9 @@
 import { Request } from "express";
 
 export type UserRequest = Request & {
-   session: {
+  session: {
     userId?: string;
-    userRole?: number;
+    userRole?: number | null;
     authenticatedAt?: string;
   };
   user?: { id: string };

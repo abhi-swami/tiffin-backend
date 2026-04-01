@@ -1,20 +1,17 @@
 import { createClient } from "redis";
-
-const sessionSecret = process.env.SESSION_SECRET;
+import {
+  redisPassword,
+  redisUrl,
+  sessionSecret,
+} from "../utils/envVariables";
 
 if (!sessionSecret) {
   throw new Error("SESSION_SECRET is required to configure sessions");
 }
 
-const redisPort = Number(process.env.REDIS_PORT || 6379);
-
 export const redisClient = createClient({
-  url:
-    process.env.REDIS_URL ||
-    `redis://${process.env.REDIS_HOST || "127.0.0.1"}:${
-      Number.isNaN(redisPort) ? 6379 : redisPort
-    }`,
-  password: process.env.REDIS_PASSWORD || undefined,
+  url: redisUrl,
+  password: redisPassword,
 });
 
 redisClient.on("error", (error) => {
@@ -45,4 +42,3 @@ export const closeRedisConnection = async () => {
 
   await redisClient.quit();
 };
-

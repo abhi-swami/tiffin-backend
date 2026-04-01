@@ -10,13 +10,12 @@ import newOrderRoutes from "./routes/newOrder.routes";
 import { errorHandler } from "./routes/errorhandle";
 import { sessionMiddleware } from './middleware/session.middlware';
 import { authMiddleware } from "./middleware/auth.middleware";
+import { roleMiddleware } from "./middleware/role.middleware";
+import { allowedOrigins, isProduction } from "./utils/envVariables";
 
 const app = express();
-const allowedOrigins = process.env.CORS_ORIGIN?.split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
 
-if (process.env.NODE_ENV === "production") {
+if (isProduction) {
   app.set("trust proxy", 1);
 }
 
@@ -37,7 +36,7 @@ app.use("/api/menu", menuRoutes);
 
 app.use("/api/menu-items", menuItemsRoutes);
 
-app.use("/api/tiffin-items", tiffinItems);
+app.use("/api/tiffin-items", authMiddleware, roleMiddleware([1, 2]), tiffinItems);
 
 app.use("/api/orders", authMiddleware, orderRoutes);
 app.use("/api/new-order", authMiddleware, newOrderRoutes);

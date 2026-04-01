@@ -2,16 +2,15 @@ import "dotenv/config";
 import app from "./app";
 import { connectToDB, closeDBConnection } from "./db";
 import { closeRedisConnection, connectToRedis } from "./config/session";
-
-const PORT = Number(process.env.PORT) || 5000;
+import { port } from "./utils/envVariables";
 
 async function startServer() {
   try {
     await connectToDB();
     await connectToRedis();
 
-    const server = app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    const server = app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
     });
 
     let isShuttingDown = false;
