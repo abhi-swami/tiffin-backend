@@ -18,12 +18,9 @@ router.get("/", async (req: Request, res: Response) => {
             image_url: menu_items.image_url,
             tiffin_id: daily_tiffin.id,
         }).from(daily_tiffin)
-            .innerJoin(daily_tiffin_items, eq(daily_tiffin.id, daily_tiffin_items.daily_tiffin_id))
-            .innerJoin(menu_items, eq(menu_items.id, daily_tiffin_items.menu_item_id))
-
-        if (result.length === 0) {
-            return res.status(404).json({ error: "No tiffin found for today" });
-        }
+          .innerJoin(daily_tiffin_items, eq(daily_tiffin.id, daily_tiffin_items.daily_tiffin_id))
+          .innerJoin(menu_items, eq(menu_items.id, daily_tiffin_items.menu_item_id))
+          .where(eq(daily_tiffin.date, today));
 
         return res.status(200).json(result);
     } catch (error) {

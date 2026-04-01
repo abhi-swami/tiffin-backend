@@ -12,7 +12,7 @@ const router = express.Router();
 router.post("/", async (req: UserRequest, res) => {
     console.log("Received new order request with body:", req.body, 'userId', req.session?.userId);
     const { tiffin_id } = req.body;
-    console.log("Received new order request with tiffin_id:", tiffin_id, 'userId', req.session?.userId);
+    // console.log("Received new order request with tiffin_id:", tiffin_id, 'userId', req.session?.userId);
     try {
         const newOrder = await db.insert(orders).values({
             user_id: req.session?.userId || "",
@@ -20,7 +20,7 @@ router.post("/", async (req: UserRequest, res) => {
             payment_status: "pending",
         }).returning()
 
-        console.log("User Orders:", newOrder, 'userId', req.session?.userId);
+        // console.log("User Orders:", newOrder, 'userId', req.session?.userId);
 
         res.status(200).json({ message: "Order Created Successfully", orders: newOrder });
     }

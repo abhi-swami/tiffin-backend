@@ -5,6 +5,10 @@ import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { UserRequest } from "../utils/interfaces";
 
+import { createSignedRoleCookieValue, roleCookieOptions } from "../cookies/role.cookie";
+import { roleCookieName, sessionCookieName } from "../utils/envVariables";
+import { sessionCookieOptions } from "../cookies/sesson.cookie";
+
 const router = express.Router();
 
 
@@ -82,7 +86,7 @@ router.post("/send-otp", async (req: Request, res: Response) => {
 
     await sendOTP(phone);
 
-    res.json({ message: "OTP sent" });
+    res.status(200).json({ message: "OTP sent" });
 
   } catch (error) {
     console.error("Send OTP error:", error);
@@ -164,8 +168,13 @@ router.post("/verify-otp", async (req: UserRequest, res: Response) => {
       });
     });
 
+    res.cookie(
+      roleCookieName,
+      createSignedRoleCookieValue(user.role ?? 3),
+      roleCookieOptions
+    );
 
-    res.json({
+    res.status(201).json({
       message: "Login successful",
       user,
       session_id: req.sessionID,
@@ -174,6 +183,25 @@ router.post("/verify-otp", async (req: UserRequest, res: Response) => {
   } catch (error) {
     console.error("Verify OTP error:", error);
     res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+router.post("/logout", async (req: UserRequest, res: Response) => {
+  try {
+    await new Promise<void>((resolve, reject) => {
+      req.session.destroy((error) => {
+        if (error) return reject(error);
+        resolve();
+      });
+    });
+
+    res.clearCookie(sessionCookieName, sessionCookieOptions);
+    res.clearCookie(roleCookieName, roleCookieOptions);
+
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({ message: "Failed to logout" });
   }
 });
 
