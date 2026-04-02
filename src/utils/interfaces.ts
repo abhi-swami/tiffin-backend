@@ -7,4 +7,6 @@ export type UserRequest = Request & {
     authenticatedAt?: string;
   };
   user?: { id: string };
+  file?: Express.Multer.File;
+  files?: Request["files"];
 };

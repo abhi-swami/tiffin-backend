@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/abhi-swami/tiffin-backend#readme",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1021.0",
+    "@types/multer": "^2.1.0",
     "connect-redis": "^9.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
@@ -29,6 +31,7 @@
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "firebase-admin": "^13.7.0",
+    "multer": "^2.1.1",
     "nodemon": "^3.1.14",
     "pg": "^8.20.0",
     "redis": "^5.11.0"

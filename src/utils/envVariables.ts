@@ -28,3 +28,9 @@ export const cookieMaxAge = sessionTtlSeconds * 1000;
 
 export const roleCookieSecret = process.env.ROLE_COOKIE_SECRET || process.env.SESSION_SECRET;
 export const roleCookieName = process.env.ROLE_COOKIE_NAME || "tiffin.role";
+
+export const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID || "";
+export const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || "";
+export const awsRegion = process.env.AWS_REGION || "";
+export const awsS3Bucket = process.env.AWS_S3_BUCKET || "";
+export const awsS3Endpoint = process.env.AWS_S3_ENDPOINT || "";
