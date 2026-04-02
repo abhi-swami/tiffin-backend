@@ -10,19 +10,24 @@ const router = express.Router();
 
 router.get("/", async (req: UserRequest, res) => {
     try {
+      
+      if(!req.session?.userId){
+        return res.status(400).json({ message: "User ID is required in session" });
+      }
+
         const result = await db
-  .select()
-  .from(orders)
-  .where(eq(orders.user_id, req.session?.userId || ""))
-  .leftJoin(daily_tiffin, eq(orders.tiffin_id, daily_tiffin.id))
-  .leftJoin(
-    daily_tiffin_items,
-    eq(daily_tiffin.id, daily_tiffin_items.daily_tiffin_id)
-  )
-  .leftJoin(menu_items, eq(daily_tiffin_items.menu_item_id, menu_items.id));
+                      .select()
+                      .from(orders)
+                      .where(eq(orders.user_id, req.session?.userId || ""))
+                      .leftJoin(daily_tiffin, eq(orders.tiffin_id, daily_tiffin.id))
+                      .leftJoin(
+                        daily_tiffin_items,
+                        eq(daily_tiffin.id, daily_tiffin_items.daily_tiffin_id)
+                      )
+                      .leftJoin(menu_items, eq(daily_tiffin_items.menu_item_id, menu_items.id));
 
 
-// 🔥 Transform
+
 const grouped = Object.values(
   result.reduce((acc, row) => {
     const orderId = row.orders.id;
