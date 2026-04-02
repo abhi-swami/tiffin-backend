@@ -10,6 +10,8 @@ declare module "express-session" {
 
   interface SessionData {
     cookie: CookieOptions;
+    userId?: string;
+    userRole?: number | null;
     user?: {
       phone: string;
     };
