@@ -9,8 +9,8 @@ const router = express.Router();
 router.get("/", async(req: Request, res: Response) => {
     try {
         const menuItems = await db.select().from(menu_items);
-        // console.log("Fetched menu items:", menuItems);
-        res.status(200).json(menuItems);
+        console.log("Fetched menu items:", menuItems);
+        res.status(200).json({message: "Menu items fetched successfully", data: menuItems});
     } catch (error) {
         console.error("Error fetching menu items:", error);
         res.status(500).json({ error: "Internal Server Error" });
