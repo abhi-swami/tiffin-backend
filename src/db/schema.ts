@@ -51,5 +51,6 @@ export const orders = pgTable('orders', {
     .references(() => daily_tiffin.id),
 
   order_date: timestamp('order_date').defaultNow(),
+  order_status: text('order_status').default('pending'),
   payment_status: text('payment_status'),
 });
