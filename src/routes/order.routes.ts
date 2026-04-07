@@ -7,7 +7,7 @@ import {
   menu_items,
   orders,
 } from "../db/schema";
-import { and, eq, inArray, lt, or } from "drizzle-orm";
+import { and, desc, eq, inArray, lt, or, SQL } from "drizzle-orm";
 import { UserRequest } from "../utils/interfaces";
 
 const router = express.Router();
@@ -26,28 +26,33 @@ router.get("/", async (req: UserRequest, res: Response) => {
     }
 
 
-    let query = db
-      .select()
-      .from(orders)
-      .where(eq(orders.user_id, req.session.userId));
+    let query: any = null;
 
     if (lastOrderDate && lastOrderId) {
-      query = query.where(
-        and(
-          eq(orders.user_id, req.session.userId),
-          or(
-            lt(orders.order_date, new Date(lastOrderDate)),
-            and(
-              eq(orders.order_date, new Date(lastOrderDate)),
-              lt(orders.id, lastOrderId)
+      query = db
+        .select()
+        .from(orders).where(
+          and(
+            eq(orders.user_id, req.session.userId),
+            or(
+              lt(orders.order_date, new Date(lastOrderDate)),
+              and(
+                eq(orders.order_date, new Date(lastOrderDate)),
+                lt(orders.id, lastOrderId)
+              )
             )
           )
-        )
-      );
+        );
+    } else {
+      query = db
+        .select()
+        .from(orders)
+        .where(eq(orders.user_id, req.session.userId))
+        .orderBy(desc(orders.order_date));
     }
 
-    const paginatedOrders = await query
-      .orderBy(orders.order_date, orders.id)
+    const paginatedOrders: typeof orders.$inferInsert[] = await query
+      .orderBy(desc(orders.order_date), desc(orders.id))
       .limit(page_size + 1);
 
     const hasMore = paginatedOrders.length > page_size;
@@ -56,7 +61,9 @@ router.get("/", async (req: UserRequest, res: Response) => {
       ? paginatedOrders.slice(0, page_size)
       : paginatedOrders;
 
-    const orderIds = finalOrders.map((order) => order.id);
+    const orderIds = finalOrders
+      .map((order) => order.id)
+      .filter((id): id is string => typeof id === "string");
 
     if (orderIds.length === 0) {
       return res.json({
@@ -65,6 +72,10 @@ router.get("/", async (req: UserRequest, res: Response) => {
         hasMore: false,
       });
     }
+
+    const orderMap = new Map(
+      finalOrders.map((order, index) => [order.id, index])
+    );
 
     const fullData = await db
       .select()
@@ -84,20 +95,21 @@ router.get("/", async (req: UserRequest, res: Response) => {
         if (!acc[orderId]) {
           acc[orderId] = {
             ...row.orders,
-            tiffin: {
-              ...row.daily_tiffin,
-              items: [],
-            },
+            tiffin: row.daily_tiffin
+              ? { ...row.daily_tiffin, items: [] }
+              : null,
           };
         }
 
-        if (row.menu_items) {
+        if (row.menu_items && acc[orderId].tiffin) {
           acc[orderId].tiffin.items.push(row.menu_items);
         }
 
         return acc;
       }, {} as Record<string, any>)
-    );
+    ).sort((a, b) => {
+      return orderMap.get(a.id)! - orderMap.get(b.id)!;
+    });
 
     // ✅ Next cursor
     const lastItem = finalOrders[finalOrders.length - 1];
