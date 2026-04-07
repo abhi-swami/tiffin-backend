@@ -1,3 +1,4 @@
+import { pgEnum } from "drizzle-orm/pg-core";
 import { Request } from "express";
 
 export type UserRequest = Request & {

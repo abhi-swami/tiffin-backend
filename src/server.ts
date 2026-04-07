@@ -3,14 +3,18 @@ import app from "./app";
 import { connectToDB, closeDBConnection } from "./db";
 import { closeRedisConnection, connectToRedis } from "./config/session";
 import { port } from "./utils/envVariables";
+import { initializeSocket } from "./config/socket";
 
 async function startServer() {
   try {
     await connectToDB();
     await connectToRedis();
 
-    const server = app.listen(port, () => {
+    const { server, ioServer } = initializeSocket(app);
+
+    server.listen(port, () => {
       console.log(`Server running on port ${port}`);
+      console.log(`Socket.IO server listening for connections`);
     });
 
     let isShuttingDown = false;

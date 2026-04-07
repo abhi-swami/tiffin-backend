@@ -13,6 +13,7 @@ import { sessionMiddleware } from './middleware/session.middlware';
 import { authMiddleware } from "./middleware/auth.middleware";
 import { roleMiddleware } from "./middleware/role.middleware";
 import { allowedOrigins, isProduction } from "./utils/envVariables";
+import adminOrderRoutes from "./routes/adminOrder.routes";
 
 const app = express();
 
@@ -42,6 +43,8 @@ app.use("/api/tiffin-items", authMiddleware, roleMiddleware([1, 2]), tiffinItems
 app.use("/api/profile", authMiddleware, profileRoutes);
 
 app.use("/api/orders", authMiddleware, orderRoutes);
+
+app.use("/api/admin-orders", authMiddleware, roleMiddleware([1, 2]), adminOrderRoutes);
 
 app.use("/api/new-order", authMiddleware, newOrderRoutes);
 

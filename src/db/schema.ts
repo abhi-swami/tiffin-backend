@@ -1,5 +1,15 @@
+import { pgEnum } from "drizzle-orm/pg-core";
 import { pgTable, uuid, text, date, integer, varchar, serial, timestamp, boolean, numeric } from "drizzle-orm/pg-core";
 import { create } from "node:domain";
+
+export const orderStatusEnum = pgEnum('order_status_enum', [
+  'pending',
+  'received',
+  'preparing',
+  'rejected',
+  'delivered',
+  'out_for_delivery',
+]);
 
 export const users = pgTable("users", {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -51,6 +61,10 @@ export const orders = pgTable('orders', {
     .references(() => daily_tiffin.id),
 
   order_date: timestamp('order_date').defaultNow(),
-  order_status: text('order_status').default('pending'),
+
+  order_status: orderStatusEnum('order_status')
+    .default('pending')
+    .notNull(),
+
   payment_status: text('payment_status'),
 });
